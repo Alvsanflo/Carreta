@@ -18,13 +18,13 @@ jobs:
         DEBUG=False
         SECRET_KEY=${{ secrets.SECRET_KEY }}
         ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
-        DATABASE_URL=${{ secrets.DATABASE_URL }}
         EOF
         
-        echo ".env generado"
+        echo ".env generado para SQLite"
     
     - name: Deploy to Render
       run: |
-        # Este webhook lo configuras en Render
-        curl https://api.render.com/deploy/${{ secrets.RENDER_DEPLOY_HOOK_ID }}
-      if: ${{ secrets.RENDER_DEPLOY_HOOK_ID != '' }}
+        # Este webhook lo configuras en Render (opcional)
+        if [ -n "${{ secrets.RENDER_DEPLOY_HOOK_ID }}" ]; then
+          curl https://api.render.com/deploy/${{ secrets.RENDER_DEPLOY_HOOK_ID }}
+        fi
