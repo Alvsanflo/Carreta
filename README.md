@@ -1,5 +1,7 @@
 # Carreta Romería - Gestor de Asistentes
 
+⚠️ **IMPORTANTE:** Base de datos expira el **22 de Abril de 2026** - Ver [DATABASE_EXPIRATION.md](DATABASE_EXPIRATION.md)
+
 Aplicación Django para gestionar personas que asisten a la Carreta Romería, con seguimiento de bebidas y pagos.
 
 ## Características
