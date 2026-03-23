@@ -1,0 +1,30 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Generate .env file
+      run: |
+        cat > .env << EOF
+        DEBUG=False
+        SECRET_KEY=${{ secrets.SECRET_KEY }}
+        ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+        DATABASE_URL=${{ secrets.DATABASE_URL }}
+        EOF
+        
+        echo ".env generado"
+    
+    - name: Deploy to Render
+      run: |
+        # Este webhook lo configuras en Render
+        curl https://api.render.com/deploy/${{ secrets.RENDER_DEPLOY_HOOK_ID }}
+      if: ${{ secrets.RENDER_DEPLOY_HOOK_ID != '' }}
