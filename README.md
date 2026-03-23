@@ -71,29 +71,26 @@ Acceder en: http://127.0.0.1:8000/
 
 1. **Crear repositorio en GitHub** y hacer push del código
 
-2. **En Render.com:**
+2. **Crear BD en Neon (gratis):**
+   - Ir a [neon.tech](https://neon.tech)
+   - Crear proyecto y copiar connection string (Pooler)
+
+3. **Agregar GitHub Secrets:**
+   - Settings → Secrets and variables → Actions
+   - Ver [NEON_SETUP.md](NEON_SETUP.md) para la lista completa
+
+4. **En Render.com:**
    - Crear nuevo "Web Service"
    - Conectar repositorio GitHub
-   - Configurar variables de entorno:
-     ```
-     ALLOWED_HOSTS=tu-dominio.onrender.com
-     DEBUG=False
-     SECRET_KEY=tu-secret-key-aqui
-     DATABASE_URL=postgresql://...
-     ```
-
-3. **Build & Start Commands:**
-   - Build: `pip install -r requirements.txt`
-   - Start: `gunicorn carretaRomeria.wsgi --log-file -`
-
-4. **PostgreSQL:**
-   - Crear una instancia PostgreSQL en Render
-   - Copiar DATABASE_URL a variables de entorno
+   - El workflow automático pasará los secrets
 
 5. **Archivos necesarios:**
    - `Procfile` ✓
    - `requirements.txt` ✓
+   - `.github/workflows/deploy.yml` ✓
    - `.gitignore` ✓
+
+> ⚠️ **Ver [NEON_SETUP.md](NEON_SETUP.md) para configuración detallada**
 
 ## Uso
 
