@@ -1,0 +1,88 @@
+{% extends "personas/base.html" %}
+
+{% block title %}Lista de Compra - Carreta Romería{% endblock %}
+
+{% block content %}
+<h1><i class="fas fa-shopping-cart"></i> Lista de Compra</h1>
+<p class="text-muted">
+    <i class="fas fa-info-circle"></i>
+    Basada en las preferencias de {{ total_personas }} personas registradas
+</p>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-bottom: 2px solid #4facfe;">
+                <h5 class="mb-0"><i class="fas fa-wine-glass-alt"></i> Bebidas Principales</h5>
+            </div>
+            <div class="card-body">
+                {% if bebidas_principales %}
+                    <ul class="list-group list-group-flush">
+                        {% for bebida, cantidad in bebidas_principales.items %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-droplet"></i> {{ bebida|title }}</span>
+                                <span class="badge rounded-pill" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">{{ cantidad }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted"><i class="fas fa-info-circle"></i> No hay datos</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-bottom: 2px solid #4facfe;">
+                <h5 class="mb-0"><i class="fas fa-glass"></i> Refrescos</h5>
+            </div>
+            <div class="card-body">
+                {% if refrescos %}
+                    <ul class="list-group list-group-flush">
+                        {% for refresco, cantidad in refrescos.items %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-droplet"></i> {{ refresco }}</span>
+                                <span class="badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">{{ cantidad }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted"><i class="fas fa-info-circle"></i> No hay refrescos solicitados</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-bottom: 2px solid #4facfe;">
+                <h5 class="mb-0"><i class="fas fa-glass-cheers"></i> Bebidas Alcohólicas</h5>
+            </div>
+            <div class="card-body">
+                {% if bebidas_alcohol %}
+                    <ul class="list-group list-group-flush">
+                        {% for alcohol, cantidad in bebidas_alcohol.items %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-cocktail"></i> {{ alcohol|title }}</span>
+                                <span class="badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">{{ cantidad }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted"><i class="fas fa-info-circle"></i> No hay bebidas alcohólicas solicitadas</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'persona_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+    <button class="btn btn-success" onclick="window.print()">
+        <i class="fas fa-print"></i> Imprimir
+    </button>
+</div>
+{% endblock %}

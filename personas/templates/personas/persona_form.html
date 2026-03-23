@@ -1,0 +1,161 @@
+{% extends "personas/base.html" %}
+
+{% block title %}{{ titulo }} - Carreta Romería{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1><i class="fas fa-user-edit"></i> {{ titulo }}</h1>
+        
+        <div class="card mt-4">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user"></i> Nombre
+                                </label>
+                                {{ form.nombre }}
+                                {% if form.nombre.errors %}
+                                    <div class="text-danger mt-2">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ form.nombre.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.apellidos.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user-tag"></i> Apellidos
+                                </label>
+                                {{ form.apellidos }}
+                                {% if form.apellidos.errors %}
+                                    <div class="text-danger mt-2">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ form.apellidos.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.bebida_principal.id_for_label }}" class="form-label">
+                                    <i class="fas fa-wine-glass-alt"></i> Bebida Principal
+                                </label>
+                                {{ form.bebida_principal }}
+                                {% if form.bebida_principal.errors %}
+                                    <div class="text-danger mt-2">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ form.bebida_principal.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.refresco.id_for_label }}" class="form-label">
+                                    <i class="fas fa-droplet"></i> Refresco
+                                </label>
+                                {{ form.refresco }}
+                                {% if form.refresco.errors %}
+                                    <div class="text-danger mt-2">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ form.refresco.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.alcohol.id_for_label }}" class="form-label">
+                                    <i class="fas fa-glass-cheers"></i> Bebida Alcohólica
+                                </label>
+                                {{ form.alcohol }}
+                                {% if form.alcohol.errors %}
+                                    <div class="text-danger mt-2">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ form.alcohol.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.dias.id_for_label }}" class="form-label">
+                                    <i class="fas fa-calendar"></i> Día de Asistencia
+                                </label>
+                                {{ form.dias }}
+                                {% if form.dias.errors %}
+                                    <div class="text-danger mt-2">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ form.dias.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.cantidad_pagar.id_for_label }}" class="form-label">
+                                    <i class="fas fa-euro-sign"></i> Cantidad a Pagar (€)
+                                </label>
+                                {{ form.cantidad_pagar }}
+                                {% if form.cantidad_pagar.errors %}
+                                    <div class="text-danger mt-2">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ form.cantidad_pagar.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3 mt-4">
+                                <div class="form-check form-switch">
+                                    {{ form.ha_pagado }}
+                                    <label for="{{ form.ha_pagado.id_for_label }}" class="form-check-label">
+                                        <i class="fas fa-money-check-alt"></i> Ha pagado
+                                    </label>
+                                </div>
+                                {% if form.ha_pagado.errors %}
+                                    <div class="text-danger mt-2">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ form.ha_pagado.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="{% url 'persona_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            {% if persona %}Actualizar{% else %}Crear{% endif %} Persona
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

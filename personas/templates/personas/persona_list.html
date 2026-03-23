@@ -1,0 +1,189 @@
+{% extends "personas/base.html" %}
+
+{% block title %}Lista de Personas - Carreta Romería{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-users"></i> Personas Registradas</h1>
+    <a href="{% url 'persona_create' %}" class="btn btn-primary btn-lg">
+        <i class="fas fa-user-plus"></i> Añadir Persona
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% if personas %}
+    <!-- Controles de búsqueda y filtros -->
+    <div class="card mb-4" style="background: #ffffff; border: 1px solid #e0e0e0;">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <!-- Búsqueda por nombre -->
+                <div class="col-md-4">
+                    <label for="search" class="form-label">
+                        <i class="fas fa-search"></i> Buscar por nombre
+                    </label>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           value="{{ search }}" placeholder="Nombre o apellido...">
+                </div>
+
+                <!-- Filtro por estado de pago -->
+                <div class="col-md-3">
+                    <label for="ha_pagado" class="form-label">
+                        <i class="fas fa-money-check"></i> Estado de pago
+                    </label>
+                    <select class="form-select" id="ha_pagado" name="ha_pagado">
+                        <option value="">Todos</option>
+                        <option value="true" {% if ha_pagado == 'true' %}selected{% endif %}>Pagados</option>
+                        <option value="false" {% if ha_pagado == 'false' %}selected{% endif %}>Pendientes</option>
+                    </select>
+                </div>
+
+                <!-- Filtro por día -->
+                <div class="col-md-2">
+                    <label for="dias" class="form-label">
+                        <i class="fas fa-calendar"></i> Día
+                    </label>
+                    <select class="form-select" id="dias" name="dias">
+                        <option value="">Todos</option>
+                        <option value="sabado" {% if dias == 'sabado' %}selected{% endif %}>Sábado</option>
+                        <option value="domingo" {% if dias == 'domingo' %}selected{% endif %}>Domingo</option>
+                        <option value="ambos" {% if dias == 'ambos' %}selected{% endif %}>Ambos</option>
+                    </select>
+                </div>
+
+                <!-- Filtro por bebida principal -->
+                <div class="col-md-3">
+                    <label for="bebida_principal" class="form-label">
+                        <i class="fas fa-wine-glass"></i> Bebida principal
+                    </label>
+                    <select class="form-select" id="bebida_principal" name="bebida_principal">
+                        <option value="">Todas</option>
+                        <option value="agua" {% if bebida_principal == 'agua' %}selected{% endif %}>Agua</option>
+                        <option value="vino" {% if bebida_principal == 'vino' %}selected{% endif %}>Vino</option>
+                        <option value="cerveza" {% if bebida_principal == 'cerveza' %}selected{% endif %}>Cerveza</option>
+                        <option value="tinto_verano" {% if bebida_principal == 'tinto_verano' %}selected{% endif %}>Tinto de Verano</option>
+                        <option value="rebujito" {% if bebida_principal == 'rebujito' %}selected{% endif %}>Rebujito</option>
+                    </select>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="col-12 d-flex gap-2 align-items-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                    <a href="{% url 'persona_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h3>{{ total_personas }}</h3>
+                <p><i class="fas fa-people-group"></i> Personas</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle table-sm">
+            <thead class="table-light">
+                <tr>
+                    <th><i class="fas fa-id-card"></i> Nombre</th>
+                    <th class="d-none d-md-table-cell"><i class="fas fa-user"></i> Apellidos</th>
+                    <th class="d-none d-lg-table-cell"><i class="fas fa-wine-glass"></i> Principal</th>
+                    <th class="d-none d-lg-table-cell"><i class="fas fa-droplet"></i> Refresco</th>
+                    <th class="d-none d-xl-table-cell"><i class="fas fa-glass-cheers"></i> Alcohol</th>
+                    <th><i class="fas fa-calendar"></i> Día</th>
+                    <th><i class="fas fa-money-bill"></i> Estado</th>
+                    <th><i class="fas fa-cog"></i> Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for persona in personas %}
+                    <tr>
+                        <td>
+                            <strong>{{ persona.nombre }}</strong>
+                            <br>
+                            <small class="text-muted d-md-none">{{ persona.apellidos }}</small>
+                        </td>
+                        <td class="d-none d-md-table-cell">{{ persona.apellidos }}</td>
+                        <td class="d-none d-lg-table-cell">
+                            <span class="badge bg-info" style="font-size: 0.75rem;">
+                                {{ persona.get_bebida_principal_display }}
+                            </span>
+                        </td>
+                        <td class="d-none d-lg-table-cell">
+                            {% if persona.refresco %}
+                                <span class="badge bg-primary" style="font-size: 0.75rem;">
+                                    {{ persona.refresco }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="d-none d-xl-table-cell">
+                            <small>{{ persona.get_alcohol_display }}</small>
+                        </td>
+                        <td>
+                            {% if persona.dias == 'sabado' %}
+                                <span class="badge bg-warning">
+                                    <i class="fas fa-sun"></i> Sábado
+                                </span>
+                            {% elif persona.dias == 'domingo' %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-moon"></i> Domingo
+                                </span>
+                            {% elif persona.dias == 'ambos' %}
+                                <span class="badge bg-info">
+                                    <i class="fas fa-calendar-days"></i> Ambos
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if persona.ha_pagado %}
+                                <span class="badge bg-success" style="font-size: 0.75rem;">
+                                    <i class="fas fa-check-circle"></i> Pagado
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger" style="font-size: 0.75rem;">
+                                    <i class="fas fa-hourglass-end"></i> Pendiente
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'persona_detail' persona.pk %}" class="btn btn-info" title="Ver">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'persona_edit' persona.pk %}" class="btn btn-warning" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info text-center" role="alert">
+        <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 15px; display: block;"></i>
+        <h4>No hay personas registradas</h4>
+        <p>¡Comienza añadiendo la primera persona!</p>
+        <a href="{% url 'persona_create' %}" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Añadir Persona
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
