@@ -3,7 +3,8 @@
 Aplicación Django para gestionar personas que asisten a la Carreta Romería, con seguimiento de bebidas y pagos.
 
 ## Base de Datos
-✅ **SQLite** - 100% gratuito, sin expiración, funcionamiento óptimo
+✅ **PostgreSQL (Neon)** en producción
+✅ **SQLite** en local como fallback
 
 ## Características
 
