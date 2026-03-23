@@ -19,19 +19,37 @@ try:
     PASSWORD = os.getenv('SUPERUSER_PASSWORD', 'Carreta2026!Seg#Admin')
     EMAIL = os.getenv('SUPERUSER_EMAIL', 'admin@carreta.local')
 
-    # Crear superusuario si no existe
-    if not User.objects.filter(username=USERNAME).exists():
-        User.objects.create_superuser(USERNAME, EMAIL, PASSWORD)
+    # Crear o actualizar superusuario (idempotente)
+    user, created = User.objects.get_or_create(
+        username=USERNAME,
+        defaults={
+            'email': EMAIL,
+            'is_staff': True,
+            'is_superuser': True,
+            'is_active': True,
+        }
+    )
+
+    # Forzar credenciales esperadas en cada deploy
+    user.email = EMAIL
+    user.is_staff = True
+    user.is_superuser = True
+    user.is_active = True
+    user.set_password(PASSWORD)
+    user.save()
+
+    if created:
         print('✓ Superusuario creado exitosamente')
-        print('=' * 50)
-        print('CREDENCIALES DE ACCESO:')
-        print('=' * 50)
-        print(f'Usuario: {USERNAME}')
-        print(f'Contraseña: {PASSWORD}')
-        print(f'Email: {EMAIL}')
-        print('=' * 50)
     else:
-        print(f'✓ Superusuario "{USERNAME}" ya existe')
+        print(f'✓ Superusuario "{USERNAME}" actualizado correctamente')
+
+    print('=' * 50)
+    print('CREDENCIALES DE ACCESO:')
+    print('=' * 50)
+    print(f'Usuario: {USERNAME}')
+    print(f'Contraseña: {PASSWORD}')
+    print(f'Email: {EMAIL}')
+    print('=' * 50)
 except Exception as e:
     print(f'⚠️  Error al crear superusuario: {e}')
     print('Esto es normal si la BD aún no está inicializada')
