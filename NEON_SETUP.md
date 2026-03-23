@@ -14,14 +14,32 @@ En tu repositorio en GitHub:
 1. Settings → Secrets and variables → Actions → New repository secret
 2. Agregar estos secrets:
 
-| Nombre | Valor | Ejemplo |
-|--------|-------|---------|
-| `SECRET_KEY` | Tu Django SECRET_KEY | `django-insecure-xxx...` |
-| `ALLOWED_HOSTS` | Tu dominio Render | `carreta-romeria.onrender.com` |
-| `DATABASE_URL` | Connection string de Neon | `postgresql://usuario:password@ep-xxxxx-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require` |
-| `SUPERUSER_USERNAME` | Usuario admin | `admin_carreta` |
-| `SUPERUSER_PASSWORD` | Contraseña admin | `Carreta2026!Seg#Admin` |
-| `SUPERUSER_EMAIL` | Email del admin | `admin@carreta.local` |
+| Nombre | Valor |
+|--------|-------|
+| `DATABASE_URL` | `postgresql://neondb_owner:npg_SNhupkLQ58sa@ep-divine-leaf-abfywul9-pooler.eu-west-2.aws.neon.tech/carreta?sslmode=require&channel_binding=require` |
+| `SECRET_KEY` | `django-insecure-617+j#278c9celk-nzx-)7_wyh&r!8!6&7wwbkp6g-_wpxhzyl` (⚠️ cambiar en prod) |
+| `ALLOWED_HOSTS` | `carreta-romeria.onrender.com` |
+| `SUPERUSER_USERNAME` | `admin_carreta` |
+| `SUPERUSER_PASSWORD` | `Carreta2026!Seg#Admin` |
+| `SUPERUSER_EMAIL` | `admin@carreta.local` |
+
+### Método Rápido: GitHub CLI
+
+Si tienes `gh` instalado:
+
+```bash
+gh secret set DATABASE_URL -b "postgresql://neondb_owner:npg_SNhupkLQ58sa@ep-divine-leaf-abfywul9-pooler.eu-west-2.aws.neon.tech/carreta?sslmode=require&channel_binding=require"
+gh secret set SECRET_KEY -b "django-insecure-617+j#278c9celk-nzx-)7_wyh&r!8!6&7wwbkp6g-_wpxhzyl"
+gh secret set ALLOWED_HOSTS -b "carreta-romeria.onrender.com"
+gh secret set SUPERUSER_USERNAME -b "admin_carreta"
+gh secret set SUPERUSER_PASSWORD -b "Carreta2026!Seg#Admin"
+gh secret set SUPERUSER_EMAIL -b "admin@carreta.local"
+```
+
+O ejecuta el helper en el repo:
+```bash
+python setup_github_secrets.py
+```
 
 ## Paso 3: Configurar Render (Opcional Manual)
 
