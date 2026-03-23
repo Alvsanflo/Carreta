@@ -7,6 +7,7 @@ Se ejecuta después de las migraciones en build de Render
 import os
 import sys
 import django
+from django.db.utils import OperationalError
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'carretaRomeria.settings')
 django.setup()
@@ -42,6 +43,23 @@ try:
         print('✓ Superusuario creado exitosamente')
     else:
         print(f'✓ Superusuario "{USERNAME}" actualizado correctamente')
+
+    print('=' * 50)
+    print('CREDENCIALES DE ACCESO:')
+    print('=' * 50)
+    print(f'Usuario: {USERNAME}')
+    print(f'Contraseña: {PASSWORD}')
+    print(f'Email: {EMAIL}')
+    print('=' * 50)
+except OperationalError as e:
+    print(f'⚠️  Error de base de datos: {e}')
+    print('Las migraciones aún no se han ejecutado correctamente.')
+    print('Verifica los logs de Render para más detalles.')
+    sys.exit(1)
+except Exception as e:
+    print(f'⚠️  Error al crear superusuario: {e}')
+    print('Intenta reintentar el deploy.')
+    sys.exit(1)
 
     print('=' * 50)
     print('CREDENCIALES DE ACCESO:')
