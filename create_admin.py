@@ -1,29 +1,33 @@
-from django.contrib.auth import get_user_model
+#!/usr/bin/env python
+"""
+Script para crear automáticamente un superusuario
+Se ejecuta después de las migraciones en build de Render
+"""
+
 import os
 import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'carretaRomeria.settings')
 django.setup()
 
-User = get_user_model()
+from django.contrib.auth.models import User
 
-# Eliminar si existe
-User.objects.filter(username='admin_carreta').delete()
+# Datos del superusuario (usar variables de entorno o defaults)
+USERNAME = os.getenv('SUPERUSER_USERNAME', 'admin_carreta')
+PASSWORD = os.getenv('SUPERUSER_PASSWORD', 'Carreta2026!Seg#Admin')
+EMAIL = os.getenv('SUPERUSER_EMAIL', 'admin@carreta.local')
 
-# Crear superusuario
-user = User.objects.create_superuser(
-    username='admin_carreta',
-    email='admin@carretaromeria.local',
-    password='Cr@rr3t@2026!Seg#7x9Kp$mN'
-)
+# Crear superusuario si no existe
+if not User.objects.filter(username=USERNAME).exists():
+    User.objects.create_superuser(USERNAME, EMAIL, PASSWORD)
+    print('✓ Superusuario creado exitosamente')
+    print('=' * 50)
+    print('CREDENCIALES DE ACCESO:')
+    print('=' * 50)
+    print(f'Usuario: {USERNAME}')
+    print(f'Contraseña: {PASSWORD}')
+    print(f'Email: {EMAIL}')
+    print('=' * 50)
+else:
+    print(f'✓ Superusuario "{USERNAME}" ya existe')
 
-print('✅ Superusuario creado exitosamente')
-print('=' * 50)
-print('CREDENCIALES DE ACCESO:')
-print('=' * 50)
-print('Usuario: admin_carreta')
-print('Contraseña: Cr@rr3t@2026!Seg#7x9Kp$mN')
-print('Email: admin@carretaromeria.local')
-print('=' * 50)
-print('Acceso admin: http://127.0.0.1:8000/admin/')
-print('=' * 50)
