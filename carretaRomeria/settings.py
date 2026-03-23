@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
-from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-617+j#278c9celk-nzx-)7_wyh&r!8!6&7wwbkp6g-_wpxhzyl')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-617+j#278c9celk-nzx-)7_wyh&r!8!6&7wwbkp6g-_wpxhzyl')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -78,9 +77,9 @@ WSGI_APPLICATION = 'carretaRomeria.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if config('DATABASE_URL', default=None):
+if os.getenv('DATABASE_URL'):
     DATABASES = {
-        'default': dj_database_url.config(default=config('DATABASE_URL'), conn_max_age=600)
+        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'), conn_max_age=600)
     }
 else:
     DATABASES = {
