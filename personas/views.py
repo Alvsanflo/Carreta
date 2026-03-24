@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Count, Q
 from django.http import HttpResponse
@@ -364,7 +363,6 @@ def stock_view(request):
 
     # Calcular necesidades de alcohol vs stock
     personas = Persona.objects.all()
-    alcohol_display = dict(BEBIDAS_ALCOHOL)
     necesidades_alcohol = {}
     for persona in personas:
         multiplicador = 2 if persona.dias == 'ambos' else 1
