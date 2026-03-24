@@ -3,162 +3,174 @@
 {% block title %}Análisis - Carreta Romería{% endblock %}
 
 {% block content %}
-<h1><i class="fas fa-chart-pie"></i> Análisis de la Carreta Romería</h1>
+<h1><i class="fas fa-chart-pie" style="color: var(--primary);"></i> Análisis de la Carreta Romería</h1>
 
-<div class="row mt-4">
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+<!-- Stats row -->
+<div class="row mt-4 g-3">
+    <div class="col-6 col-md-3">
+        <div class="stat-card purple">
             <h3>{{ total_personas }}</h3>
             <p><i class="fas fa-users"></i> Total Personas</p>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+    <div class="col-6 col-md-3">
+        <div class="stat-card green">
             <h3>{{ total_pagado }}</h3>
             <p><i class="fas fa-check-circle"></i> Pagadas</p>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+    <div class="col-6 col-md-3">
+        <div class="stat-card red">
             <h3>{{ total_no_pagado }}</h3>
             <p><i class="fas fa-hourglass-end"></i> Pendientes</p>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+    <div class="col-6 col-md-3">
+        <div class="stat-card orange">
             <h3>{{ cantidad_total }}€</h3>
             <p><i class="fas fa-euro-sign"></i> Total</p>
         </div>
     </div>
 </div>
 
-<div class="row mt-4">
+<!-- Financial + Days -->
+<div class="row mt-4 g-4">
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
-                <h5 class="mb-0"><i class="fas fa-money-bill-wave"></i> Pagos Recaudados</h5>
+        <div class="card" style="border-top: 4px solid #10b981;">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-money-bill-wave" style="color: #10b981;"></i> Pagos Recaudados</h5>
             </div>
             <div class="card-body text-center">
-                <h2 style="color: #28a745;">{{ cantidad_pagada }}€</h2>
-                <p class="text-muted">De {{ cantidad_total }}€</p>
-                <div class="progress">
-                    <div class="progress-bar" style="width: 75%;"></div>
+                <h2 style="color: #10b981; font-weight: 800;">{{ cantidad_pagada }}€</h2>
+                <p class="text-muted small">De {{ cantidad_total }}€ totales</p>
+                {% if cantidad_total > 0 %}
+                <div class="progress mt-3">
+                    <div class="progress-bar" style="width: {% widthratio cantidad_pagada cantidad_total 100 %}%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card" style="border-top: 4px solid #ef4444;">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i> Pendiente de Pago</h5>
+            </div>
+            <div class="card-body text-center">
+                <h2 style="color: #ef4444; font-weight: 800;">{{ cantidad_pendiente }}€</h2>
+                <p class="text-muted small">Aún por cobrar</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card" style="border-top: 4px solid #6366f1;">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-calendar-days" style="color: #6366f1;"></i> Por Día</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3 p-2" style="background: #fef3c7; border-radius: 10px;">
+                    <span><i class="fas fa-sun" style="color: #f59e0b;"></i> <strong>Sábado</strong></span>
+                    <span class="badge bg-warning rounded-pill">{{ personas_sabado }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center p-2" style="background: #e0e7ff; border-radius: 10px;">
+                    <span><i class="fas fa-moon" style="color: #6366f1;"></i> <strong>Domingo</strong></span>
+                    <span class="badge bg-primary rounded-pill">{{ personas_domingo }}</span>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
-                <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Pendiente de Pago</h5>
-            </div>
-            <div class="card-body text-center">
-                <h2 style="color: #dc3545;">{{ cantidad_pendiente }}€</h2>
-                <p class="text-muted">Aún por cobrar</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
-                <h5 class="mb-0"><i class="fas fa-calendar-days"></i> Por Día</h5>
-            </div>
-            <div class="card-body">
-                <p><i class="fas fa-sun"></i> <strong>Sábado:</strong> {{ personas_sabado }} personas</p>
-                <p><i class="fas fa-moon"></i> <strong>Domingo:</strong> {{ personas_domingo }} personas</p>
-            </div>
-        </div>
-    </div>
 </div>
 
-<div class="row mt-4">
+<!-- Drinks analysis -->
+<div class="row mt-4 g-4">
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
-                <h5 class="mb-0"><i class="fas fa-wine-glass-alt"></i> Bebidas Principales</h5>
+        <div class="card" style="border-top: 4px solid #06b6d4;">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-wine-glass-alt" style="color: #06b6d4;"></i> Bebidas Principales</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 {% if bebidas_principales %}
                     <ul class="list-group list-group-flush">
                         {% for bebida in bebidas_principales %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-droplet"></i> {{ bebida.bebida_principal|title }}</span>
-                                <span class="badge rounded-pill" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">{{ bebida.count }}</span>
+                                <span><i class="fas fa-droplet" style="color: #06b6d4;"></i> {{ bebida.bebida_principal|title }}</span>
+                                <span class="badge bg-info rounded-pill">{{ bebida.count }}</span>
                             </li>
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p class="text-muted"><i class="fas fa-info-circle"></i> No hay datos</p>
+                    <div class="p-3 text-muted text-center"><i class="fas fa-info-circle"></i> No hay datos</div>
                 {% endif %}
             </div>
         </div>
     </div>
 
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-bottom: 2px solid #4facfe;">
-                <h5 class="mb-0"><i class="fas fa-glass-cheers"></i> Bebidas Alcohólicas</h5>
+        <div class="card" style="border-top: 4px solid #f59e0b;">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-glass-cheers" style="color: #f59e0b;"></i> Bebidas Alcohólicas</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 {% if bebidas_alcohol %}
                     <ul class="list-group list-group-flush">
                         {% for bebida in bebidas_alcohol %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-cocktail"></i> {{ bebida.alcohol|title }}</span>
-                                <span class="badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">{{ bebida.count }}</span>
+                                <span><i class="fas fa-cocktail" style="color: #f59e0b;"></i> {{ bebida.alcohol|title }}</span>
+                                <span class="badge bg-warning rounded-pill">{{ bebida.count }}</span>
                             </li>
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p class="text-muted"><i class="fas fa-info-circle"></i> No hay datos</p>
+                    <div class="p-3 text-muted text-center"><i class="fas fa-info-circle"></i> No hay datos</div>
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
 
-<div class="row mt-4">
+<!-- Payment lists -->
+<div class="row mt-4 g-4">
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-bottom: 2px solid #4facfe;">
-                <h5 class="mb-0"><i class="fas fa-check-circle"></i> Personas que Pagaron</h5>
+        <div class="card" style="border-top: 4px solid #10b981;">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-check-circle" style="color: #10b981;"></i> Personas que Pagaron</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 {% if pagadas %}
                     <ul class="list-group list-group-flush">
                         {% for persona in pagadas %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-user"></i> <strong>{{ persona.nombre }} {{ persona.apellidos }}</strong></span>
-                                <span class="badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">{{ persona.cantidad_pagar }}€</span>
+                                <span><i class="fas fa-user" style="color: #10b981;"></i> <strong>{{ persona.nombre }} {{ persona.apellidos }}</strong></span>
+                                <span class="badge bg-success rounded-pill">{{ persona.cantidad_pagar }}€</span>
                             </li>
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p class="text-muted"><i class="fas fa-info-circle"></i> No hay registros</p>
+                    <div class="p-3 text-muted text-center"><i class="fas fa-info-circle"></i> No hay registros</div>
                 {% endif %}
             </div>
         </div>
     </div>
 
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-bottom: 2px solid #4facfe;">
-                <h5 class="mb-0"><i class="fas fa-clock"></i> Personas Pendientes</h5>
+        <div class="card" style="border-top: 4px solid #ef4444;">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-clock" style="color: #ef4444;"></i> Personas Pendientes</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 {% if no_pagadas %}
                     <ul class="list-group list-group-flush">
                         {% for persona in no_pagadas %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-user"></i> <strong>{{ persona.nombre }} {{ persona.apellidos }}</strong></span>
-                                <span class="badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">{{ persona.cantidad_pagar }}€</span>
+                                <span><i class="fas fa-user" style="color: #ef4444;"></i> <strong>{{ persona.nombre }} {{ persona.apellidos }}</strong></span>
+                                <span class="badge bg-danger rounded-pill">{{ persona.cantidad_pagar }}€</span>
                             </li>
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p class="text-success"><i class="fas fa-check-circle"></i> ¡Todas las personas han pagado!</p>
+                    <div class="p-3 text-center" style="color: #10b981;"><i class="fas fa-check-circle"></i> ¡Todas las personas han pagado!</div>
                 {% endif %}
             </div>
         </div>
