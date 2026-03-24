@@ -21,6 +21,34 @@
     </div>
 </div>
 
+<!-- Balance financiero -->
+<div class="row mt-4 g-3">
+    <div class="col-6 col-md-3">
+        <div class="stat-card green">
+            <h3>{{ total_recaudado }}€</h3>
+            <p><i class="fas fa-users"></i> Recaudado</p>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card blue">
+            <h3>{{ total_ingresos_stock }}€</h3>
+            <p><i class="fas fa-arrow-up"></i> Otros Ingresos</p>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card red">
+            <h3>{{ total_gastos }}€</h3>
+            <p><i class="fas fa-arrow-down"></i> Gastos</p>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card {% if saldo >= 0 %}green{% else %}red{% endif %}">
+            <h3>{{ saldo }}€</h3>
+            <p><i class="fas fa-wallet"></i> Balance</p>
+        </div>
+    </div>
+</div>
+
 <div class="row mt-4 g-4">
     <div class="col-md-4">
         <div class="card" style="border-top: 4px solid #6366f1;">
@@ -72,15 +100,35 @@
                 <h5 class="mb-0"><i class="fas fa-glass-cheers" style="color: #f59e0b;"></i> Bebidas Alcohólicas</h5>
             </div>
             <div class="card-body p-0">
-                {% if bebidas_alcohol %}
-                    <ul class="list-group list-group-flush">
-                        {% for alcohol, cantidad in bebidas_alcohol.items %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-cocktail" style="color: #f59e0b;"></i> {{ alcohol }}</span>
-                                <span class="badge bg-warning rounded-pill">{{ cantidad }}</span>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                {% if bebidas_alcohol_compra %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Bebida</th>
+                                    <th class="text-center">Necesario</th>
+                                    <th class="text-center">Stock</th>
+                                    <th class="text-center">A Comprar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in bebidas_alcohol_compra %}
+                                <tr>
+                                    <td><i class="fas fa-cocktail" style="color: #f59e0b;"></i> {{ item.nombre }}</td>
+                                    <td class="text-center">{{ item.necesario }}</td>
+                                    <td class="text-center">{{ item.stock }}</td>
+                                    <td class="text-center">
+                                        {% if item.a_comprar > 0 %}
+                                            <span class="badge bg-danger rounded-pill">{{ item.a_comprar }}</span>
+                                        {% else %}
+                                            <span class="badge bg-success rounded-pill"><i class="fas fa-check"></i> 0</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 {% else %}
                     <div class="p-3 text-muted text-center"><i class="fas fa-info-circle"></i> No hay bebidas alcohólicas solicitadas</div>
                 {% endif %}

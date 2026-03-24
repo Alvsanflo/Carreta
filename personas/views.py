@@ -132,16 +132,18 @@ def shopping_list(request):
 
     # Dict para nombres legibles
     alcohol_display = dict(BEBIDAS_ALCOHOL)
+    alcohol_key_by_display = {v: k for k, v in BEBIDAS_ALCOHOL}
     refresco_display = dict(REFRESCOS_CHOICES)
     principal_display = dict(BEBIDAS_PRINCIPALES)
 
-    # Contar bebidas principales
+    # Contar bebidas principales (con cantidad seleccionada)
     bebidas_principales_count = {}
     for persona in personas:
         display = principal_display.get(persona.bebida_principal, persona.bebida_principal)
+        cantidad = persona.cantidad_bebida_principal or 1
         if display not in bebidas_principales_count:
             bebidas_principales_count[display] = 0
-        bebidas_principales_count[display] += 1
+        bebidas_principales_count[display] += cantidad
 
     # Contar refrescos (x2 si asiste ambos días)
     refrescos_count = {}
@@ -163,15 +165,41 @@ def shopping_list(request):
                 bebidas_alcohol_count[display] = 0
             bebidas_alcohol_count[display] += multiplicador
 
-    # Stock de alcohol
-    stock_alcohol = StockAlcohol.objects.all()
+    # Stock de alcohol - restar del necesario para calcular "a comprar"
+    stock_alcohol = {s.bebida: s.cantidad_stock for s in StockAlcohol.objects.all()}
+
+    bebidas_alcohol_compra = []
+    for display_name, necesario in bebidas_alcohol_count.items():
+        key = alcohol_key_by_display.get(display_name, '')
+        stock = stock_alcohol.get(key, 0)
+        a_comprar = max(necesario - stock, 0)
+        bebidas_alcohol_compra.append({
+            'nombre': display_name,
+            'necesario': necesario,
+            'stock': stock,
+            'a_comprar': a_comprar,
+        })
+
+    # Balance financiero: recaudado + ingresos - gastos
+    movimientos = StockDinero.objects.all()
+    total_ingresos_stock = movimientos.filter(tipo='ingreso').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+    total_gastos = movimientos.filter(tipo='gasto').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+    total_recaudado = personas.filter(ha_pagado=True).aggregate(Sum('cantidad_pagar'))['cantidad_pagar__sum'] or 0
+    total_pendiente = personas.filter(ha_pagado=False).aggregate(Sum('cantidad_pagar'))['cantidad_pagar__sum'] or 0
+    total_ingresos = total_ingresos_stock + total_recaudado
+    saldo = total_ingresos - total_gastos
 
     context = {
         'bebidas_principales': bebidas_principales_count,
         'refrescos': refrescos_count,
-        'bebidas_alcohol': bebidas_alcohol_count,
+        'bebidas_alcohol_compra': bebidas_alcohol_compra,
         'total_personas': personas.count(),
-        'stock_alcohol': stock_alcohol,
+        'total_recaudado': total_recaudado,
+        'total_pendiente': total_pendiente,
+        'total_ingresos_stock': total_ingresos_stock,
+        'total_ingresos': total_ingresos,
+        'total_gastos': total_gastos,
+        'saldo': saldo,
     }
     return render(request, 'personas/shopping_list.html', context)
 
@@ -187,6 +215,7 @@ def shopping_list_pdf(request):
 
     personas = Persona.objects.all()
     alcohol_display = dict(BEBIDAS_ALCOHOL)
+    alcohol_key_by_display = {v: k for k, v in BEBIDAS_ALCOHOL}
     refresco_display = dict(REFRESCOS_CHOICES)
     principal_display = dict(BEBIDAS_PRINCIPALES)
 
@@ -194,7 +223,8 @@ def shopping_list_pdf(request):
     bebidas_principales_count = {}
     for persona in personas:
         display = principal_display.get(persona.bebida_principal, persona.bebida_principal)
-        bebidas_principales_count[display] = bebidas_principales_count.get(display, 0) + 1
+        cantidad = persona.cantidad_bebida_principal or 1
+        bebidas_principales_count[display] = bebidas_principales_count.get(display, 0) + cantidad
 
     refrescos_count = {}
     for persona in personas:
@@ -209,6 +239,20 @@ def shopping_list_pdf(request):
         if persona.alcohol != 'ninguno':
             display = alcohol_display.get(persona.alcohol, persona.alcohol)
             bebidas_alcohol_count[display] = bebidas_alcohol_count.get(display, 0) + multiplicador
+
+    # Stock de alcohol
+    stock_alcohol = {s.bebida: s.cantidad_stock for s in StockAlcohol.objects.all()}
+    bebidas_alcohol_compra = []
+    for display_name, necesario in bebidas_alcohol_count.items():
+        key = alcohol_key_by_display.get(display_name, '')
+        stock = stock_alcohol.get(key, 0)
+        a_comprar = max(necesario - stock, 0)
+        bebidas_alcohol_compra.append({
+            'nombre': display_name,
+            'necesario': necesario,
+            'stock': stock,
+            'a_comprar': a_comprar,
+        })
 
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=2*cm, bottomMargin=2*cm)
@@ -269,13 +313,13 @@ def shopping_list_pdf(request):
         elements.append(t)
         elements.append(Spacer(1, 20))
 
-    # Bebidas alcohólicas
-    if bebidas_alcohol_count:
-        elements.append(Paragraph('Bebidas Alcohólicas', header_style))
-        data = [['Bebida', 'Cantidad']]
-        for alcohol, cantidad in bebidas_alcohol_count.items():
-            data.append([alcohol, str(cantidad)])
-        t = Table(data, colWidths=[10*cm, 5*cm])
+    # Bebidas alcohólicas (con stock)
+    if bebidas_alcohol_compra:
+        elements.append(Paragraph('Bebidas Alcohólicas (descontando stock)', header_style))
+        data = [['Bebida', 'Necesario', 'Stock', 'A Comprar']]
+        for item in bebidas_alcohol_compra:
+            data.append([item['nombre'], str(item['necesario']), str(item['stock']), str(item['a_comprar'])])
+        t = Table(data, colWidths=[7*cm, 3*cm, 3*cm, 3*cm])
         t.setStyle(table_style)
         elements.append(t)
 
@@ -293,8 +337,13 @@ def stock_view(request):
     stock_alcohol = StockAlcohol.objects.all()
     movimientos = StockDinero.objects.all()
 
-    total_ingresos = movimientos.filter(tipo='ingreso').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+    total_ingresos_stock = movimientos.filter(tipo='ingreso').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
     total_gastos = movimientos.filter(tipo='gasto').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+
+    # Dinero recaudado de personas que han pagado
+    total_recaudado = Persona.objects.filter(ha_pagado=True).aggregate(Sum('cantidad_pagar'))['cantidad_pagar__sum'] or 0
+    total_pendiente = Persona.objects.filter(ha_pagado=False).aggregate(Sum('cantidad_pagar'))['cantidad_pagar__sum'] or 0
+    total_ingresos = total_ingresos_stock + total_recaudado
     saldo = total_ingresos - total_gastos
 
     # Calcular necesidades de alcohol vs stock
@@ -356,6 +405,9 @@ def stock_view(request):
         'stock_alcohol': stock_alcohol,
         'stock_comparison': stock_comparison,
         'movimientos': movimientos,
+        'total_ingresos_stock': total_ingresos_stock,
+        'total_recaudado': total_recaudado,
+        'total_pendiente': total_pendiente,
         'total_ingresos': total_ingresos,
         'total_gastos': total_gastos,
         'saldo': saldo,

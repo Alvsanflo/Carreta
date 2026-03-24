@@ -48,6 +48,10 @@ class Persona(models.Model):
         choices=BEBIDAS_PRINCIPALES,
         default='agua'
     )
+    cantidad_bebida_principal = models.PositiveIntegerField(
+        default=1,
+        verbose_name="Cantidad bebida principal"
+    )
     refresco = models.CharField(
         max_length=20,
         choices=REFRESCOS_CHOICES,

@@ -48,7 +48,7 @@
                     </div>
 
                     <div class="row g-3 mt-1">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="{{ form.bebida_principal.id_for_label }}" class="form-label">
                                 <i class="fas fa-wine-glass-alt"></i> Bebida Principal
                             </label>
@@ -57,7 +57,16 @@
                                 <div class="text-danger mt-1 small">{{ form.bebida_principal.errors }}</div>
                             {% endif %}
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
+                            <label for="{{ form.cantidad_bebida_principal.id_for_label }}" class="form-label">
+                                <i class="fas fa-hashtag"></i> Cantidad
+                            </label>
+                            {{ form.cantidad_bebida_principal }}
+                            {% if form.cantidad_bebida_principal.errors %}
+                                <div class="text-danger mt-1 small">{{ form.cantidad_bebida_principal.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-3">
                             <label for="{{ form.refresco.id_for_label }}" class="form-label">
                                 <i class="fas fa-droplet"></i> Refresco
                             </label>

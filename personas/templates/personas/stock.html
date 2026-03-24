@@ -32,22 +32,39 @@
 
 <!-- Summary cards -->
 <div class="row mt-4 g-3">
-    <div class="col-6 col-md-4">
+    <div class="col-6 col-md-3">
         <div class="stat-card green">
-            <h3>{{ total_ingresos }}€</h3>
-            <p><i class="fas fa-arrow-up"></i> Ingresos</p>
+            <h3>{{ total_recaudado }}€</h3>
+            <p><i class="fas fa-users"></i> Recaudado</p>
         </div>
     </div>
-    <div class="col-6 col-md-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card blue">
+            <h3>{{ total_ingresos_stock }}€</h3>
+            <p><i class="fas fa-arrow-up"></i> Otros Ingresos</p>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
         <div class="stat-card red">
             <h3>{{ total_gastos }}€</h3>
             <p><i class="fas fa-arrow-down"></i> Gastos</p>
         </div>
     </div>
-    <div class="col-12 col-md-4">
-        <div class="stat-card {% if saldo >= 0 %}blue{% else %}red{% endif %}">
+    <div class="col-6 col-md-3">
+        <div class="stat-card {% if saldo >= 0 %}green{% else %}red{% endif %}">
             <h3>{{ saldo }}€</h3>
-            <p><i class="fas fa-wallet"></i> Saldo Actual</p>
+            <p><i class="fas fa-wallet"></i> Balance (Recaudado + Ingresos - Gastos)</p>
+        </div>
+    </div>
+</div>
+<div class="row mt-2 g-3">
+    <div class="col-12">
+        <div class="alert alert-info mb-0 small">
+            <i class="fas fa-info-circle"></i>
+            <strong>Balance</strong> = Recaudado ({{ total_recaudado }}€) + Otros Ingresos ({{ total_ingresos_stock }}€) - Gastos ({{ total_gastos }}€) = <strong>{{ saldo }}€</strong>
+            {% if total_pendiente > 0 %}
+                | Pendiente de cobro: <strong>{{ total_pendiente }}€</strong>
+            {% endif %}
         </div>
     </div>
 </div>
