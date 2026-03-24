@@ -5,8 +5,8 @@ from .models import Persona, StockAlcohol, StockDinero
 class PersonaForm(forms.ModelForm):
     class Meta:
         model = Persona
-        fields = ['nombre', 'apellidos', 'bebida_principal', 'refresco',
-                  'alcohol', 'dias', 'ha_pagado', 'cantidad_pagar']
+        fields = ['nombre', 'apellidos', 'bebida_principal', 'cantidad_bebida_principal',
+                  'refresco', 'alcohol', 'dias', 'ha_pagado', 'cantidad_pagar']
         widgets = {
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -18,6 +18,11 @@ class PersonaForm(forms.ModelForm):
             }),
             'bebida_principal': forms.Select(attrs={
                 'class': 'form-control'
+            }),
+            'cantidad_bebida_principal': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '1',
+                'placeholder': '1'
             }),
             'refresco': forms.Select(attrs={
                 'class': 'form-control'
