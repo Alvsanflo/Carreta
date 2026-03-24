@@ -18,9 +18,18 @@ jobs:
         DEBUG=False
         SECRET_KEY=${{ secrets.SECRET_KEY }}
         ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+        DATABASE_URL=${{ secrets.DATABASE_URL }}
+        SUPERUSER_USERNAME=${{ secrets.SUPERUSER_USERNAME }}
+        SUPERUSER_PASSWORD=${{ secrets.SUPERUSER_PASSWORD }}
+        SUPERUSER_EMAIL=${{ secrets.SUPERUSER_EMAIL }}
         EOF
         
-        echo ".env generado para SQLite"
+        echo "✓ .env generado con variables de GitHub Secrets"
+        echo "  - DEBUG: False"
+        echo "  - SECRET_KEY: ***"
+        echo "  - ALLOWED_HOSTS: ***"
+        echo "  - DATABASE_URL: ***"
+        echo "  - SUPERUSER: ***"
     
     - name: Deploy to Render
       run: |

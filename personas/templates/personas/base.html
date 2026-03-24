@@ -413,7 +413,7 @@
         .navbar {
             background: #ffffff !important;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-            padding: 1rem 0;
+            padding: 0.5rem 0;
         }
         
         .navbar-brand {
@@ -421,29 +421,39 @@
             font-size: 1.8rem;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             color: #4facfe !important;
+            flex-wrap: nowrap;
         }
         
-        .navbar-brand-logo {
-            font-size: 2rem;
-            animation: bounce 2s ease-in-out infinite;
+        .navbar-brand img {
+            height: 45px;
+            width: auto;
         }
         
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-5px);
-            }
+        .navbar-brand-text {
+            display: none;
+        }
+        
+        .navbar-toggler {
+            border: 2px solid #4facfe;
+            padding: 0.4rem 0.6rem;
+            font-size: 1.2rem;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.25rem rgba(79, 172, 254, 0.25);
+        }
+        
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%234facfe' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
         }
         
         .nav-link {
             transition: all 0.3s ease;
             font-weight: 500;
-            margin-left: 5px;
             color: #4facfe !important;
+            padding: 0.7rem 0.5rem !important;
         }
         
         .nav-link:hover {
@@ -453,6 +463,84 @@
         
         .nav-link i {
             margin-right: 5px;
+            width: 18px;
+            text-align: center;
+        }
+        
+        .dropdown-menu {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dropdown-item {
+            color: #4facfe;
+            padding: 0.8rem 1rem;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f0f8ff;
+            color: #00f2fe;
+        }
+        
+        /* Mobile navbar */
+        @media (max-width: 767px) {
+            .navbar {
+                padding: 0.5rem 0;
+            }
+            
+            .navbar-brand {
+                font-size: 1.4rem;
+                gap: 8px;
+            }
+            
+            .navbar-brand img {
+                height: 40px;
+            }
+            
+            .nav-link {
+                padding: 0.6rem 0 !important;
+                margin: 0.3rem 0 !important;
+                font-size: 0.95rem;
+            }
+            
+            .navbar-nav {
+                gap: 0;
+            }
+            
+            .nav-item {
+                padding: 0.3rem 0;
+            }
+            
+            .dropdown-toggle::after {
+                margin-left: 0.5rem;
+            }
+            
+            .dropdown-menu {
+                margin-top: 0.5rem;
+                background-color: #f0f8ff;
+                border-left: 3px solid #4facfe;
+            }
+            
+            .dropdown-item {
+                padding: 0.7rem 1rem;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            
+            .dropdown-item:last-child {
+                border-bottom: none;
+            }
+        }
+        
+        /* Tablet y arriba */
+        @media (min-width: 768px) {
+            .navbar-brand-text {
+                display: inline;
+            }
+            
+            .nav-link {
+                padding: 0.5rem 1rem !important;
+            }
         }
         
         .container-main {
@@ -683,13 +771,13 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/" style="display: flex; align-items: center; justify-content: center; width: 100%; gap: 12px;">
-                <img src="{% static 'img/logo.png' %}" alt="Logo" style="height: 50px;">
-                <span>Carreta Romería</span>
+    <nav class="navbar navbar-expand-md navbar-light">
+        <div class="container-fluid px-3">
+            <a class="navbar-brand" href="/">
+                <img src="{% static 'img/logo.png' %}" alt="Logo" class="me-2">
+                <span class="navbar-brand-text">Carreta</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -697,36 +785,42 @@
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'persona_list' %}">
-                                <i class="fas fa-users"></i> Personas
+                                <i class="fas fa-users"></i>
+                                <span class="d-md-inline">Personas</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'persona_create' %}">
-                                <i class="fas fa-user-plus"></i> Añadir
+                                <i class="fas fa-user-plus"></i>
+                                <span class="d-md-inline">Añadir</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'analytics' %}">
-                                <i class="fas fa-chart-bar"></i> Análisis
+                                <i class="fas fa-chart-bar"></i>
+                                <span class="d-md-inline">Análisis</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'shopping_list' %}">
-                                <i class="fas fa-shopping-cart"></i> Compra
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="d-md-inline">Compra</span>
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle"></i> {{ user.username }}
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i>
+                                <span class="d-md-inline">{{ user.username }}</span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'login' %}">
-                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span class="d-md-inline">Iniciar Sesión</span>
                             </a>
                         </li>
                     {% endif %}
