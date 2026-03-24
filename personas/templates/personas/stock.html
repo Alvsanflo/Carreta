@@ -1,0 +1,226 @@
+{% extends "personas/base.html" %}
+
+{% block title %}Stock y Dinero - Carreta Romería{% endblock %}
+
+{% block content %}
+<h1><i class="fas fa-warehouse" style="color: var(--primary);"></i> Stock y Control de Dinero</h1>
+
+<!-- Summary cards -->
+<div class="row mt-4 g-3">
+    <div class="col-6 col-md-4">
+        <div class="stat-card green">
+            <h3>{{ total_ingresos }}€</h3>
+            <p><i class="fas fa-arrow-up"></i> Ingresos</p>
+        </div>
+    </div>
+    <div class="col-6 col-md-4">
+        <div class="stat-card red">
+            <h3>{{ total_gastos }}€</h3>
+            <p><i class="fas fa-arrow-down"></i> Gastos</p>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="stat-card {% if saldo >= 0 %}blue{% else %}red{% endif %}">
+            <h3>{{ saldo }}€</h3>
+            <p><i class="fas fa-wallet"></i> Saldo Actual</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4 g-4">
+    <!-- Stock de Alcohol -->
+    <div class="col-lg-6">
+        <div class="card" style="border-top: 4px solid #f59e0b;">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-wine-bottle" style="color: #f59e0b;"></i> Stock de Bebidas Alcohólicas</h5>
+            </div>
+            <div class="card-body">
+                <!-- Add stock form -->
+                <form method="POST" class="mb-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_alcohol">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-5">
+                            {{ alcohol_form.bebida }}
+                        </div>
+                        <div class="col-3">
+                            {{ alcohol_form.cantidad_stock }}
+                        </div>
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-warning w-100">
+                                <i class="fas fa-plus"></i> Añadir/Actualizar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                {% if stock_comparison %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Bebida</th>
+                                    <th class="text-center">Stock</th>
+                                    <th class="text-center">Necesario</th>
+                                    <th class="text-center">Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in stock_comparison %}
+                                <tr>
+                                    <td><i class="fas fa-cocktail" style="color: #f59e0b;"></i> {{ item.bebida }}</td>
+                                    <td class="text-center"><strong>{{ item.stock }}</strong></td>
+                                    <td class="text-center">{{ item.necesario }}</td>
+                                    <td class="text-center">
+                                        {% if item.diferencia >= 0 %}
+                                            <span class="badge bg-success"><i class="fas fa-check"></i> +{{ item.diferencia }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger"><i class="fas fa-exclamation"></i> {{ item.diferencia }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">
+                                        <form method="POST" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="delete_alcohol">
+                                            <input type="hidden" name="stock_id" value="{{ item.stock_id }}">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% elif stock_alcohol %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Bebida</th>
+                                    <th class="text-center">Stock</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in stock_alcohol %}
+                                <tr>
+                                    <td><i class="fas fa-cocktail" style="color: #f59e0b;"></i> {{ item.get_bebida_display }}</td>
+                                    <td class="text-center"><strong>{{ item.cantidad_stock }}</strong></td>
+                                    <td class="text-end">
+                                        <form method="POST" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="delete_alcohol">
+                                            <input type="hidden" name="stock_id" value="{{ item.pk }}">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-box-open" style="font-size: 2rem;"></i>
+                        <p class="mt-2 mb-0">No hay stock registrado</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Control de Dinero -->
+    <div class="col-lg-6">
+        <div class="card" style="border-top: 4px solid #10b981;">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-money-bill-wave" style="color: #10b981;"></i> Movimientos de Dinero</h5>
+            </div>
+            <div class="card-body">
+                <!-- Add money form -->
+                <form method="POST" class="mb-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_dinero">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-4">
+                            {{ dinero_form.concepto }}
+                        </div>
+                        <div class="col-3">
+                            {{ dinero_form.cantidad }}
+                        </div>
+                        <div class="col-2">
+                            {{ dinero_form.tipo }}
+                        </div>
+                        <div class="col-3">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-plus"></i> Registrar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                {% if movimientos %}
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Concepto</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-center">Tipo</th>
+                                    <th class="text-center">Fecha</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mov in movimientos %}
+                                <tr>
+                                    <td>{{ mov.concepto }}</td>
+                                    <td class="text-center">
+                                        <strong style="color: {% if mov.tipo == 'ingreso' %}#10b981{% else %}#ef4444{% endif %};">
+                                            {% if mov.tipo == 'ingreso' %}+{% else %}-{% endif %}{{ mov.cantidad }}€
+                                        </strong>
+                                    </td>
+                                    <td class="text-center">
+                                        {% if mov.tipo == 'ingreso' %}
+                                            <span class="badge bg-success"><i class="fas fa-arrow-up"></i> Ingreso</span>
+                                        {% else %}
+                                            <span class="badge bg-danger"><i class="fas fa-arrow-down"></i> Gasto</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center small text-muted">{{ mov.fecha|date:"d/m/Y" }}</td>
+                                    <td class="text-end">
+                                        <form method="POST" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="delete_dinero">
+                                            <input type="hidden" name="mov_id" value="{{ mov.pk }}">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-receipt" style="font-size: 2rem;"></i>
+                        <p class="mt-2 mb-0">No hay movimientos registrados</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'persona_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+</div>
+{% endblock %}

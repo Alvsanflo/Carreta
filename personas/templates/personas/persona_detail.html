@@ -5,85 +5,72 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h1 class="mb-0">
-                    <i class="fas fa-user-circle"></i>
-                    {{ persona.nombre }} {{ persona.apellidos }}
-                </h1>
-            </div>
-            <div class="card-body">
-                <div class="row mb-4">
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 2rem; color: white;">
+                        {{ persona.nombre|first }}
+                    </div>
+                    <h2 class="mb-1">{{ persona.nombre }} {{ persona.apellidos }}</h2>
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-clock"></i> Registrado: {{ persona.fecha_creacion|date:"d/m/Y H:i" }}
+                    </p>
+                </div>
+
+                <hr>
+
+                <div class="row g-4 mt-2">
                     <div class="col-md-6">
-                        <p>
-                            <strong><i class="fas fa-user"></i> Nombre:</strong> 
-                            {{ persona.nombre }}
-                        </p>
-                        <p>
-                            <strong><i class="fas fa-user-tag"></i> Apellidos:</strong> 
-                            {{ persona.apellidos }}
-                        </p>
-                        <p>
-                            <strong><i class="fas fa-wine-glass-alt"></i> Bebida Principal:</strong>
-                            <span class="badge bg-info">{{ persona.get_bebida_principal_display }}</span>
-                        </p>
-                        <p>
-                            <strong><i class="fas fa-droplet"></i> Refresco:</strong> 
-                            {% if persona.refresco %}
-                                <span class="badge bg-primary">{{ persona.refresco }}</span>
-                            {% else %}
-                                <span class="text-muted">No especificado</span>
-                            {% endif %}
-                        </p>
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase fw-bold"><i class="fas fa-wine-glass-alt"></i> Bebida Principal</small>
+                            <div class="mt-1"><span class="badge bg-info">{{ persona.get_bebida_principal_display }}</span></div>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase fw-bold"><i class="fas fa-droplet"></i> Refresco</small>
+                            <div class="mt-1">
+                                {% if persona.refresco and persona.refresco != 'ninguno' %}
+                                    <span class="badge bg-primary">{{ persona.get_refresco_display }}</span>
+                                {% else %}
+                                    <span class="text-muted">No especificado</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase fw-bold"><i class="fas fa-glass-cheers"></i> Bebida Alcohólica</small>
+                            <div class="mt-1">{{ persona.get_alcohol_display }}</div>
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <p>
-                            <strong><i class="fas fa-glass-cheers"></i> Bebida Alcohólica:</strong> 
-                            {{ persona.get_alcohol_display }}
-                        </p>
-                        <p>
-                            <strong><i class="fas fa-calendar"></i> Día(s):</strong>
-                            {% if persona.dias == 'sabado' %}
-                                <span class="badge bg-warning">
-                                    <i class="fas fa-sun"></i> Sábado
-                                </span>
-                            {% elif persona.dias == 'domingo' %}
-                                <span class="badge bg-danger">
-                                    <i class="fas fa-moon"></i> Domingo
-                                </span>
-                            {% elif persona.dias == 'ambos' %}
-                                <span class="badge bg-info">
-                                    <i class="fas fa-calendar-days"></i> Sábado y Domingo
-                                </span>
-                            {% endif %}
-                        </p>
-                        <p>
-                            <strong><i class="fas fa-euro-sign"></i> Cantidad a Pagar:</strong> 
-                            <span class="badge bg-primary">{{ persona.cantidad_pagar }}€</span>
-                        </p>
-                        <p>
-                            <strong><i class="fas fa-money-check-alt"></i> Estado de Pago:</strong>
-                            {% if persona.ha_pagado %}
-                                <span class="badge bg-success">
-                                    <i class="fas fa-check-circle"></i> Pagado
-                                </span>
-                            {% else %}
-                                <span class="badge bg-danger">
-                                    <i class="fas fa-hourglass-end"></i> Pendiente
-                                </span>
-                            {% endif %}
-                        </p>
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase fw-bold"><i class="fas fa-calendar"></i> Día(s)</small>
+                            <div class="mt-1">
+                                {% if persona.dias == 'sabado' %}
+                                    <span class="badge bg-warning"><i class="fas fa-sun"></i> Sábado</span>
+                                {% elif persona.dias == 'domingo' %}
+                                    <span class="badge bg-danger"><i class="fas fa-moon"></i> Domingo</span>
+                                {% elif persona.dias == 'ambos' %}
+                                    <span class="badge bg-info"><i class="fas fa-calendar-days"></i> Sábado y Domingo</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase fw-bold"><i class="fas fa-euro-sign"></i> Cantidad a Pagar</small>
+                            <div class="mt-1" style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">{{ persona.cantidad_pagar }}€</div>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase fw-bold"><i class="fas fa-money-check-alt"></i> Estado de Pago</small>
+                            <div class="mt-1">
+                                {% if persona.ha_pagado %}
+                                    <span class="badge bg-success"><i class="fas fa-check-circle"></i> Pagado</span>
+                                {% else %}
+                                    <span class="badge bg-danger"><i class="fas fa-hourglass-end"></i> Pendiente</span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <hr>
-                
-                <p class="text-muted small">
-                    <i class="fas fa-clock"></i>
-                    Registrado: {{ persona.fecha_creacion|date:"d/m/Y H:i" }}
-                </p>
             </div>
-            <div class="card-footer d-flex gap-2">
+            <div class="card-footer bg-white d-flex gap-2 p-3">
                 <a href="{% url 'persona_edit' persona.pk %}" class="btn btn-warning">
                     <i class="fas fa-edit"></i> Editar
                 </a>
