@@ -30,7 +30,12 @@ def persona_list(request):
     # Filtro por bebida principal
     bebida_principal = request.GET.get('bebida_principal', '')
     if bebida_principal:
-        personas = personas.filter(bebida_principal=bebida_principal)
+        personas = personas.filter(
+            Q(bebida_principal=bebida_principal)
+            | Q(bebida_principal__startswith=f'{bebida_principal},')
+            | Q(bebida_principal__contains=f',{bebida_principal},')
+            | Q(bebida_principal__endswith=f',{bebida_principal}')
+        )
 
     context = {
         'personas': personas,
@@ -95,10 +100,19 @@ def analytics(request):
     personas_sabado = todas_personas.filter(Q(dias='sabado') | Q(dias='ambos')).count()
     personas_domingo = todas_personas.filter(Q(dias='domingo') | Q(dias='ambos')).count()
 
-    # Análisis de bebidas principales
-    bebidas_principales = todas_personas.values('bebida_principal').annotate(
-        count=Count('id')
-    ).order_by('-count')
+    # Análisis de bebidas principales (selección múltiple)
+    principal_display = dict(BEBIDAS_PRINCIPALES)
+    bebidas_principales_count = {}
+    for persona in todas_personas:
+        keys = [k.strip() for k in (persona.bebida_principal or '').split(',') if k.strip()]
+        for key in keys:
+            label = principal_display.get(key, key)
+            bebidas_principales_count[label] = bebidas_principales_count.get(label, 0) + 1
+    bebidas_principales = sorted(
+        [{'bebida_principal': k, 'count': v} for k, v in bebidas_principales_count.items()],
+        key=lambda x: x['count'],
+        reverse=True,
+    )
 
     # Análisis de bebidas alcohólicas
     bebidas_alcohol = todas_personas.values('alcohol').annotate(
@@ -136,14 +150,15 @@ def shopping_list(request):
     refresco_display = dict(REFRESCOS_CHOICES)
     principal_display = dict(BEBIDAS_PRINCIPALES)
 
-    # Contar bebidas principales (con cantidad seleccionada)
+    # Contar bebidas principales (selección múltiple)
     bebidas_principales_count = {}
     for persona in personas:
-        display = principal_display.get(persona.bebida_principal, persona.bebida_principal)
-        cantidad = persona.cantidad_bebida_principal or 1
-        if display not in bebidas_principales_count:
-            bebidas_principales_count[display] = 0
-        bebidas_principales_count[display] += cantidad
+        keys = [k.strip() for k in (persona.bebida_principal or '').split(',') if k.strip()]
+        for key in keys:
+            display = principal_display.get(key, key)
+            if display not in bebidas_principales_count:
+                bebidas_principales_count[display] = 0
+            bebidas_principales_count[display] += 1
 
     # Contar refrescos (x2 si asiste ambos días)
     refrescos_count = {}
@@ -222,9 +237,10 @@ def shopping_list_pdf(request):
     # Calcular datos
     bebidas_principales_count = {}
     for persona in personas:
-        display = principal_display.get(persona.bebida_principal, persona.bebida_principal)
-        cantidad = persona.cantidad_bebida_principal or 1
-        bebidas_principales_count[display] = bebidas_principales_count.get(display, 0) + cantidad
+        keys = [k.strip() for k in (persona.bebida_principal or '').split(',') if k.strip()]
+        for key in keys:
+            display = principal_display.get(key, key)
+            bebidas_principales_count[display] = bebidas_principales_count.get(display, 0) + 1
 
     refrescos_count = {}
     for persona in personas:

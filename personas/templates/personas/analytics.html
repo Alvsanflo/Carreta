@@ -95,7 +95,7 @@
                     <ul class="list-group list-group-flush">
                         {% for bebida in bebidas_principales %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-droplet" style="color: #06b6d4;"></i> {{ bebida.bebida_principal|title }}</span>
+                                <span><i class="fas fa-droplet" style="color: #06b6d4;"></i> {{ bebida.bebida_principal }}</span>
                                 <span class="badge bg-info rounded-pill">{{ bebida.count }}</span>
                             </li>
                         {% endfor %}

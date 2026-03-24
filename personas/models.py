@@ -44,13 +44,8 @@ class Persona(models.Model):
     nombre = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     bebida_principal = models.CharField(
-        max_length=20,
-        choices=BEBIDAS_PRINCIPALES,
+        max_length=200,
         default='agua'
-    )
-    cantidad_bebida_principal = models.PositiveIntegerField(
-        default=1,
-        verbose_name="Cantidad bebida principal"
     )
     refresco = models.CharField(
         max_length=20,
@@ -81,6 +76,14 @@ class Persona(models.Model):
 
     def __str__(self):
         return f"{self.nombre} {self.apellidos}"
+
+    def get_bebidas_principales_list(self):
+        values = [v.strip() for v in (self.bebida_principal or '').split(',') if v.strip()]
+        labels = dict(BEBIDAS_PRINCIPALES)
+        return [labels.get(v, v) for v in values]
+
+    def get_bebidas_principales_display(self):
+        return ', '.join(self.get_bebidas_principales_list())
 
 
 class StockAlcohol(models.Model):

@@ -86,7 +86,6 @@
                         <option value="cerveza" {% if bebida_principal == 'cerveza' %}selected{% endif %}>Cerveza</option>
                         <option value="tinto_verano" {% if bebida_principal == 'tinto_verano' %}selected{% endif %}>Tinto de Verano</option>
                         <option value="rebujito" {% if bebida_principal == 'rebujito' %}selected{% endif %}>Rebujito</option>
-                        <option value="tonica" {% if bebida_principal == 'tonica' %}selected{% endif %}>Tónica (Exótica)</option>
                     </select>
                 </div>
                 <div class="col-md-2 d-flex gap-2 list-filter-actions">
@@ -134,9 +133,11 @@
                         </td>
                         <td class="d-none d-md-table-cell">{{ persona.apellidos }}</td>
                         <td class="d-none d-lg-table-cell">
-                            <span class="badge bg-info">
-                                {{ persona.get_bebida_principal_display }}
-                            </span>
+                            {% for bebida in persona.get_bebidas_principales_list %}
+                                <span class="badge bg-info">{{ bebida }}</span>
+                            {% empty %}
+                                <span class="text-muted">—</span>
+                            {% endfor %}
                         </td>
                         <td class="d-none d-lg-table-cell">
                             {% if persona.refresco and persona.refresco != 'ninguno' %}
