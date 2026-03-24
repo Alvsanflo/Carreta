@@ -2,8 +2,33 @@
 
 {% block title %}Stock y Dinero - Carreta Romería{% endblock %}
 
+{% block extra_css %}
+<style>
+    @media (max-width: 768px) {
+        .stock-page-title {
+            font-size: 1.15rem;
+        }
+
+        .stock-form-row .btn {
+            width: 100%;
+        }
+
+        .stock-table th,
+        .stock-table td {
+            font-size: 0.74rem;
+            padding: 8px 6px;
+        }
+
+        .stock-table .btn-sm {
+            padding: 0.25rem 0.4rem;
+            font-size: 0.7rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h1><i class="fas fa-warehouse" style="color: var(--primary);"></i> Stock y Control de Dinero</h1>
+<h1 class="stock-page-title"><i class="fas fa-warehouse" style="color: var(--primary);"></i> Stock y Control de Dinero</h1>
 
 <!-- Summary cards -->
 <div class="row mt-4 g-3">
@@ -39,14 +64,14 @@
                 <form method="POST" class="mb-4">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="add_alcohol">
-                    <div class="row g-2 align-items-end">
-                        <div class="col-5">
+                    <div class="row g-2 align-items-end stock-form-row">
+                        <div class="col-12 col-sm-5">
                             {{ alcohol_form.bebida }}
                         </div>
-                        <div class="col-3">
+                        <div class="col-12 col-sm-3">
                             {{ alcohol_form.cantidad_stock }}
                         </div>
-                        <div class="col-4">
+                        <div class="col-12 col-sm-4">
                             <button type="submit" class="btn btn-warning w-100">
                                 <i class="fas fa-plus"></i> Añadir/Actualizar
                             </button>
@@ -56,7 +81,7 @@
 
                 {% if stock_comparison %}
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <table class="table table-hover align-middle mb-0 stock-table">
                             <thead>
                                 <tr>
                                     <th>Bebida</th>
@@ -96,7 +121,7 @@
                     </div>
                 {% elif stock_alcohol %}
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <table class="table table-hover align-middle mb-0 stock-table">
                             <thead>
                                 <tr>
                                     <th>Bebida</th>
@@ -145,17 +170,17 @@
                 <form method="POST" class="mb-4">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="add_dinero">
-                    <div class="row g-2 align-items-end">
-                        <div class="col-4">
+                    <div class="row g-2 align-items-end stock-form-row">
+                        <div class="col-12 col-sm-4">
                             {{ dinero_form.concepto }}
                         </div>
-                        <div class="col-3">
+                        <div class="col-12 col-sm-3">
                             {{ dinero_form.cantidad }}
                         </div>
-                        <div class="col-2">
+                        <div class="col-12 col-sm-2">
                             {{ dinero_form.tipo }}
                         </div>
-                        <div class="col-3">
+                        <div class="col-12 col-sm-3">
                             <button type="submit" class="btn btn-success w-100">
                                 <i class="fas fa-plus"></i> Registrar
                             </button>
@@ -165,7 +190,7 @@
 
                 {% if movimientos %}
                     <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                        <table class="table table-hover align-middle mb-0">
+                        <table class="table table-hover align-middle mb-0 stock-table">
                             <thead>
                                 <tr>
                                     <th>Concepto</th>

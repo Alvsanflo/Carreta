@@ -2,6 +2,20 @@
 
 {% block title %}{{ titulo }} - Carreta Romería{% endblock %}
 
+{% block extra_css %}
+<style>
+    @media (max-width: 768px) {
+        .persona-form-actions {
+            flex-direction: column;
+        }
+
+        .persona-form-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
@@ -94,7 +108,7 @@
 
                     <hr class="my-4">
 
-                    <div class="d-flex gap-2 justify-content-end">
+                    <div class="d-flex gap-2 justify-content-end persona-form-actions">
                         <a href="{% url 'persona_list' %}" class="btn btn-secondary">
                             <i class="fas fa-times"></i> Cancelar
                         </a>

@@ -2,6 +2,29 @@
 
 {% block title %}Lista de Personas - Carreta Romería{% endblock %}
 
+{% block extra_css %}
+<style>
+    @media (max-width: 768px) {
+        .list-filter-actions {
+            flex-direction: column;
+        }
+
+        .list-filter-actions .btn {
+            width: 100%;
+        }
+
+        .persona-action-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .persona-action-buttons .btn {
+            padding: 0.35rem 0.45rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <h1 class="mb-0"><i class="fas fa-users" style="color: var(--primary);"></i> Personas Registradas</h1>
@@ -66,7 +89,7 @@
                         <option value="tonica" {% if bebida_principal == 'tonica' %}selected{% endif %}>Tónica (Exótica)</option>
                     </select>
                 </div>
-                <div class="col-md-2 d-flex gap-2">
+                <div class="col-md-2 d-flex gap-2 list-filter-actions">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fas fa-filter"></i> Filtrar
                     </button>
@@ -154,7 +177,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <div class="btn-group btn-group-sm" role="group">
+                            <div class="btn-group btn-group-sm persona-action-buttons" role="group">
                                 <a href="{% url 'persona_detail' persona.pk %}" class="btn btn-info btn-sm" title="Ver">
                                     <i class="fas fa-eye"></i>
                                 </a>
