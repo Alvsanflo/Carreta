@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Count, Q
 from django.http import HttpResponse
-from .models import Persona, StockAlcohol, StockDinero, BEBIDAS_ALCOHOL, REFRESCOS_CHOICES, BEBIDAS_PRINCIPALES
-from .forms import PersonaForm, StockAlcoholForm, StockDineroForm
+from .models import Persona, StockAlcohol, StockDinero, StockObjeto, BEBIDAS_ALCOHOL, REFRESCOS_CHOICES, BEBIDAS_PRINCIPALES
+from .forms import PersonaForm, StockAlcoholForm, StockDineroForm, StockObjetoForm
 import io
 
 # Vista de lista de personas
@@ -351,6 +351,7 @@ def shopping_list_pdf(request):
 def stock_view(request):
     stock_alcohol = StockAlcohol.objects.all()
     movimientos = StockDinero.objects.all()
+    objetos = StockObjeto.objects.select_related('persona').all()
 
     total_ingresos_stock = movimientos.filter(tipo='ingreso').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
     total_gastos = movimientos.filter(tipo='gasto').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
@@ -385,6 +386,7 @@ def stock_view(request):
     # Forms
     alcohol_form = StockAlcoholForm()
     dinero_form = StockDineroForm()
+    objeto_form = StockObjetoForm()
 
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -406,6 +408,11 @@ def stock_view(request):
             if dinero_form.is_valid():
                 dinero_form.save()
                 return redirect('stock')
+        elif action == 'add_objeto':
+            objeto_form = StockObjetoForm(request.POST)
+            if objeto_form.is_valid():
+                objeto_form.save()
+                return redirect('stock')
         elif action == 'delete_alcohol':
             stock_id = request.POST.get('stock_id')
             StockAlcohol.objects.filter(pk=stock_id).delete()
@@ -414,11 +421,16 @@ def stock_view(request):
             mov_id = request.POST.get('mov_id')
             StockDinero.objects.filter(pk=mov_id).delete()
             return redirect('stock')
+        elif action == 'delete_objeto':
+            obj_id = request.POST.get('obj_id')
+            StockObjeto.objects.filter(pk=obj_id).delete()
+            return redirect('stock')
 
     context = {
         'stock_alcohol': stock_alcohol,
         'stock_comparison': stock_comparison,
         'movimientos': movimientos,
+        'objetos': objetos,
         'total_ingresos_stock': total_ingresos_stock,
         'total_recaudado': total_recaudado,
         'total_pendiente': total_pendiente,
@@ -427,5 +439,6 @@ def stock_view(request):
         'saldo': saldo,
         'alcohol_form': alcohol_form,
         'dinero_form': dinero_form,
+        'objeto_form': objeto_form,
     }
     return render(request, 'personas/stock.html', context)

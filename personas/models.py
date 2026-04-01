@@ -12,6 +12,7 @@ BEBIDAS_PRINCIPALES = [
     ('cerveza', 'Cerveza'),
     ('tinto_verano', 'Tinto de Verano'),
     ('rebujito', 'Rebujito'),
+    ('jagger', 'Jagger'),
 ]
 
 REFRESCOS_CHOICES = [
@@ -22,6 +23,7 @@ REFRESCOS_CHOICES = [
     ('fanta_limon', 'Fanta Limón'),
     ('sprite', 'Sprite'),
     ('aquarius', 'Aquarius'),
+    ('power', 'Power'),
     ('tonica', 'Tónica'),
     ('nestea', 'Nestea'),
     ('ninguno', 'Ninguno'),
@@ -35,6 +37,7 @@ BEBIDAS_ALCOHOL = [
     ('ginebra_larios', 'Ginebra Larios'),
     ('ginebra_beefeater', 'Ginebra Beefeater'),
     ('ginebra_exotic', 'Ginebra Exotic'),
+    ('ginebra_rives_1880', 'Ginebra Rives 1880'),
     ('vodka', 'Vodka'),
     ('ninguno', 'Ninguno'),
 ]
@@ -120,3 +123,25 @@ class StockDinero(models.Model):
     def __str__(self):
         signo = '+' if self.tipo == 'ingreso' else '-'
         return f"{signo}{self.cantidad}€ - {self.concepto}"
+
+
+class StockObjeto(models.Model):
+    objeto = models.CharField(max_length=200)
+    persona = models.ForeignKey(
+        Persona,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='objetos_guardados'
+    )
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['objeto', 'persona__nombre', 'persona__apellidos']
+        verbose_name = 'Objeto guardado'
+        verbose_name_plural = 'Objetos guardados'
+
+    def __str__(self):
+        if self.persona:
+            return f"{self.objeto} - {self.persona}"
+        return self.objeto

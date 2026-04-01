@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Persona, StockAlcohol, StockDinero
+from .models import Persona, StockAlcohol, StockDinero, StockObjeto
 
 @admin.register(Persona)
 class PersonaAdmin(admin.ModelAdmin):
@@ -30,3 +30,10 @@ class StockDineroAdmin(admin.ModelAdmin):
     list_display = ('concepto', 'cantidad', 'tipo', 'fecha')
     list_filter = ('tipo',)
     search_fields = ('concepto',)
+
+
+@admin.register(StockObjeto)
+class StockObjetoAdmin(admin.ModelAdmin):
+    list_display = ('objeto', 'persona', 'fecha_creacion')
+    list_filter = ('persona',)
+    search_fields = ('objeto', 'persona__nombre', 'persona__apellidos')

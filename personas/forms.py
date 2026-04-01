@@ -1,5 +1,5 @@
 from django import forms
-from .models import Persona, StockAlcohol, StockDinero, BEBIDAS_PRINCIPALES
+from .models import Persona, StockAlcohol, StockDinero, StockObjeto, BEBIDAS_PRINCIPALES
 
 
 class PersonaForm(forms.ModelForm):
@@ -97,3 +97,22 @@ class StockDineroForm(forms.ModelForm):
             }),
             'tipo': forms.Select(attrs={'class': 'form-control'}),
         }
+
+
+class StockObjetoForm(forms.ModelForm):
+    class Meta:
+        model = StockObjeto
+        fields = ['objeto', 'persona']
+        widgets = {
+            'objeto': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Objeto'
+            }),
+            'persona': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['persona'].required = False
+        self.fields['persona'].empty_label = 'Selecciona persona'
+        self.fields['persona'].queryset = Persona.objects.order_by('nombre', 'apellidos')

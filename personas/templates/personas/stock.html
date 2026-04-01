@@ -260,6 +260,80 @@
     </div>
 </div>
 
+<div class="row mt-1 g-4">
+    <div class="col-12">
+        <div class="card" style="border-top: 4px solid #3b82f6;">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-box-archive" style="color: #3b82f6;"></i> Objetos Guardados</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="mb-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_objeto">
+                    <div class="row g-2 align-items-end stock-form-row">
+                        <div class="col-12 col-md-5">
+                            {{ objeto_form.objeto }}
+                        </div>
+                        <div class="col-12 col-md-4">
+                            {{ objeto_form.persona }}
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-plus"></i> Añadir objeto
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                {% if objetos %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 stock-table">
+                            <thead>
+                                <tr>
+                                    <th>Objeto</th>
+                                    <th>Lo guarda</th>
+                                    <th class="text-center">Fecha</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in objetos %}
+                                <tr>
+                                    <td><i class="fas fa-box" style="color: #3b82f6;"></i> {{ item.objeto }}</td>
+                                    <td>
+                                        {% if item.persona %}
+                                            {{ item.persona.nombre }} {{ item.persona.apellidos }}
+                                        {% else %}
+                                            <span class="text-muted">Sin asignar</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center small text-muted">{{ item.fecha_creacion|date:"d/m/Y" }}</td>
+                                    <td class="text-end">
+                                        <form method="POST" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="delete_objeto">
+                                            <input type="hidden" name="obj_id" value="{{ item.pk }}">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-box-open" style="font-size: 2rem;"></i>
+                        <p class="mt-2 mb-0">No hay objetos registrados</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="mt-4">
     <a href="{% url 'persona_list' %}" class="btn btn-secondary">
         <i class="fas fa-arrow-left"></i> Volver
